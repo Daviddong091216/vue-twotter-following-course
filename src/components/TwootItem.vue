@@ -28,7 +28,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style  scoped>
 .twoot-item {
   padding: 20px;
   background-color: white;

@@ -6,24 +6,28 @@
       <div class="user-profile_follower-count">
         <strong>Followers: </strong>{{ followers }}
       </div>
-      <form class="user-profile_create-twoot" @submit.prevent="createNewTwoot">
-        <label for="newTwoot"><strong>New Twoot</strong></label>
-        <textarea id="newTwoot" rows="4" v-model="newTwootContent" />
+      <form
+        class="user-profile_create-twoot"
+        @submit.prevent="createNewTwoot"
+        :class="{ '--exceeded': newTwootCharacterCount > 180 }"
+      >
+        <label for="newTwoot"
+          ><strong>New Twoot</strong> ({{ newTwootCharacterCount }}/180)</label
+        >
+        <textarea id="newTwoot" rows="4" v-model="state.newTwootContent" />
         <div class="user-profile_create-twoot-type">
           <label for="newTwootType"><strong>Type: </strong></label>
-          <select id="newTwootType" v-model="selectedTwootType">
+          <select id="newTwootType" v-model="state.selectedTwootType">
             <option
               :value="option.value"
-              v-for="(option, index) in twootTypes"
+              v-for="(option, index) in state.twootTypes"
               :key="index"
             >
               {{ option.name }}
             </option>
           </select>
+          <button class="button">Twoot!</button>
         </div>
-        <button>
-            Twoot!
-        </button>
       </form>
     </div>
     <div class="user-profile_twoots-wraper">
@@ -40,9 +44,40 @@
 
 <script>
 import TwootItem from "./TwootItem";
+import { reactive, computed } from "vue";
+
 export default {
   name: "UserProfile",
   components: { TwootItem },
+  setup() {
+    const state = reactive({
+      newTwootContent: "",
+      selectedTwootType: "instant",
+      twootTypes: [
+        { value: "draft", name: "Draft" },
+        { value: "instant", name: "Instant Twoot" },
+      ],
+    });
+    const newTwootCharacterCount = computed(() => state.newTwootContent.length);
+
+    function createNewTwoot() {
+      if (state.newTwootContent && state.selectedTwootType !== "draft") {
+        state.user.twoots.unshift({
+          id: this.user.twoots.length + 1,
+          content: this.newTwootContent,
+        });
+        state.newTwootContent = "";
+      }
+    }
+
+    return {
+      state,
+      newTwootCharacterCount,
+      createNewTwoot
+    };
+  },
+
+  /*
   data() {
     return {
       newTwootContent: "",
@@ -74,8 +109,8 @@ export default {
     },
   },
   computed: {
-    fullName() {
-      return `${this.user.firstName} ${this.user.lastName}`;
+    newTwootCharacterCount() {
+      return this.newTwootContent.length;
     },
   },
   methods: {
@@ -86,21 +121,23 @@ export default {
       console.log(`Favouriteed Tweet #${id}`);
     },
     createNewTwoot() {
-        if(this.newTwootContent && this.selectedTwootType !== "draft") {
-            this.user.twoots.unshift( {
-                id: this.user.twoots.length + 1,
-                content: this.newTwootContent
-            })
-        }
+      if (this.newTwootContent && this.selectedTwootType !== "draft") {
+        this.user.twoots.unshift({
+          id: this.user.twoots.length + 1,
+          content: this.newTwootContent,
+        });
+        this.newTwootContent = "";
+      }
     },
   },
   mounted() {
     this.followUser();
   },
+  */
 };
 </script>
 
-<style>
+<style  scoped>
 .user-profile {
   display: grid;
   grid-template-columns: 1fr 3fr;
@@ -133,5 +170,18 @@ h1 {
   padding-top: 20px;
   display: flex;
   flex-direction: column;
+}
+.--exceeded {
+  color: red;
+  border-color: red;
+}
+.button {
+  background: darkgreen;
+  color: white;
+  border-radius: 5px;
+  margin-right: auto;
+  padding: 0 20px;
+  font-weight: bold;
+  font-size: 20px;
 }
 </style>

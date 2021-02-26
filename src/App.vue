@@ -1,5 +1,11 @@
 <template>
   <div id="app">
+    <nav>
+      <div class="navigation_logo">David's Twotter</div>
+      <div class="navigation_user">
+        {{ user.username }}
+      </div>
+    </nav>
     <UserProfile />
   </div>
 </template>
@@ -11,10 +17,17 @@ export default {
   components: {
     UserProfile,
   },
+  data() {
+    return {
+      user: {
+        username: "_David Dong",
+      },
+    };
+  },
 };
 </script>
 
-<style>
+<style >
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -22,5 +35,20 @@ export default {
   color: #2c3e50;
   min-height: 100vh;
   background-color: #f3f5fa;
+}
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 5%;
+  background-color: darkred;
+  color: white;
+}
+.navigation_logo {
+  font-weight: bold;
+  font-size: 24px;
+}
+navigation_user {
+  font-weight: bold;
 }
 </style>
